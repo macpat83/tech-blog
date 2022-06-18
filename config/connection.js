@@ -1,5 +1,7 @@
 const Sequelize = required('sequalize');
 
+require('dotenv').config();
+
 //create connection to our database
 let sequelize;
 
