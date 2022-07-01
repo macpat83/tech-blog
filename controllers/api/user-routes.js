@@ -15,9 +15,8 @@ router.get('/', (req, res) => {
       });
   });
 
-
-  // GET /api/users/1
-  router.get('/:id', (req, res) => {
+// GET /api/users/1
+router.get('/:id', (req, res) => {
     User.findOne({
         attributes: { exclude: ['password']},
         where: {
@@ -52,8 +51,7 @@ router.get('/', (req, res) => {
       });
   });
 
-
-  // POST /api/users
+// POST /api/users
 router.post('/', (req, res) => {
     User.create({
       username: req.body.username,
@@ -102,7 +100,18 @@ router.post('/', (req, res) => {
   });
 
 
-  // PUT /api/users/1
+  router.post('/logout', (req, res) => {
+    if (req.session.loggedIn) {
+      req.session.destroy(() => {
+        res.status(204).end();
+      });
+    }
+    else {
+      res.status(404).end();
+    }
+  });
+
+// PUT /api/users/1
 router.put('/:id', withAuth, (req, res) => {
     User.update(req.body, {
         individualHooks: true,
@@ -123,7 +132,7 @@ router.put('/:id', withAuth, (req, res) => {
       });
   });
 
-  // DELETE /api/users/1
+// DELETE /api/users/1
 router.delete('/:id', withAuth, (req, res) => {
     User.destroy({
       where: {
