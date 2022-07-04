@@ -5,38 +5,41 @@ const withAuth = require('../../utils/auth');
 
 
 // get all users
+// get all post
 router.get('/', (req, res) => {
-    console.log('======================');
-    Post.findAll({
-        attributes: [
-            'id',
-            'title',
-            'created_at',
-            'post_content'
-        ],
-      order: [['created_at', 'DESC']],
-      include: [
-        // Comment model here -- attached username to comment
-        {
-          model: Comment,
-          attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
-          include: {
-            model: User,
-            attributes: ['username']
-          }
-        },
-        {
+  console.log('======================');
+  Post.findAll({
+    order: [['created_at', 'DESC']],
+    attributes: [
+      'id',
+      'post_content',
+      'title',
+      'created_at'
+    ],
+    include: [
+      // include the Comment model here:
+      {
+        model: Comment,
+        attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+        include: {
           model: User,
           attributes: ['username']
-        },
-      ]
-    })
-      .then(dbPostData => res.json(dbPostData))
-      .catch(err => {
-        console.log(err);
-        res.status(500).json(err);
-      });
+        }
+      },
+      {
+        model: User,
+        attributes: ['username']
+      },
+    ]
+  })
+   .then(dbPostData => res.json(dbPostData))
+.catch(err => {
+  console.log(err);
+  res.status(500).json(err);
   });
+});
+
+  
 
 
   
@@ -82,7 +85,7 @@ router.get('/', (req, res) => {
   });
 
 
-  router.post('/', withAuth, (req, res) => {
+  router.post('/', (req, res) => {
     Post.create({
       title: req.body.title,
       post_content: req.body.post_content,
@@ -93,7 +96,7 @@ router.get('/', (req, res) => {
         console.log(err);
         res.status(500).json(err);
       });
-});
+  });
 
 router.put('/:id', withAuth, (req, res) => {
     Post.update({
